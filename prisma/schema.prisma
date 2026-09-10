@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Especialidad {
+  id   Int @id @default(autoincrement())
+  name String @unique
+
+  //Una especialidad puede tener muchos médicos
+  medicos Medico[]
+
+  @@map("especialidades")
+}
+
+
+model Medico {
+  id           Int @id @default(autoincrement())
+  firstName    String  
+  lastName     String
+  email        String @unique
+  especialidadId  Int
+
+  //cada médico pertenece a una especialidad
+  especialidad Especialidad @relation(fields: [especialidadId], references: [id])
+
+  //un medico puede tener muchas citas
+  citas Cita[]
+
+  @@map("medicos")
+}
+
+
+model Paciente{
+  id        Int    @id @default(autoincrement()) //pk y autoincremental
+  firstName String
+  lastName  String
+  email     String @unique
+  fechaNacimiento DateTime
+
+  //un paciente puede tener muchas citas
+  citas Cita[]
+
+  @@map("pacientes")
+}
+
+
+enum EstadoCita {
+  PROGRAMADA
+  COMPLETADA
+  CANCELADA
+}
+
+model Cita {
+  id         Int    @id @default(autoincrement())
+  pacienteId Int
+  medicoId   Int
+  fecha      DateTime
+  estado     EstadoCita @default(PROGRAMADA)
+
+  //una cita pertenece a un paciente
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+
+  //una cita pertenece a un médico
+  medico Medico @relation(fields: [medicoId], references: [id])
+
+  @@map("citas")
+}
+
+
+enum Role {
+  RECEPCIONISTA
+  MEDICO 
+  GERENCIA
+}
+
+model User {
+  id        Int @id @default(autoincrement())
+  email     String @unique
+  password  String
+  role      Role
+
+  @@map("users")
+}
+
+
+
+
+
+
+
