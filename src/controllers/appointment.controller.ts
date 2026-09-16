@@ -93,9 +93,13 @@ export const cambiarEstadoAppointment = async (req: Request, res: Response) => {
         );
 
         return res.status(200).json(cita);
-    } catch (error: any) {
-
-        if (error.code === "P2025") {
+    } catch (error) {
+        //verificamos si el error contiene el código de prisma
+        if(
+            error instanceof Error &&
+            "code" in error &&
+            error.code === "P2025"
+        ) {
             return res.status(404).json({
                 message: "Cita no encontrada",
             });
