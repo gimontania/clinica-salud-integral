@@ -13,6 +13,12 @@ const appointmentSchema = z.object({
     ),
 });
 
+
+//validamos los estados permitidos para actualizar una cita
+export const appointmentStatusSchema = z.object({
+    estado: z.enum(["COMPLETADA", "CANCELADA"]),
+});
+
 //middleware que ejecuta la validación del controller
 export const validateAppointment = (
     req: Request, res: Response, next: NextFunction) => {
